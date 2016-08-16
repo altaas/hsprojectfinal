@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 #HelpScout Test Project Documentation
 
 This is the code for the HelpScout Test Project. This code will to deploy a CI/CD pipeline using automation tools. The stack will be composed of : 
@@ -59,3 +60,7 @@ Additional Notes
 
 
 > Written with [StackEdit](https://stackedit.io/).
+=======
+# hsprojectfinal
+Test project from HS - Final Files
+>>>>>>> 321144eb1f79cd1dc05d7d5d0e764e7fe014eab1
