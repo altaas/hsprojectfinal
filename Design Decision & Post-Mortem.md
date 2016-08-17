@@ -84,7 +84,7 @@ Make the servers test themselves and notify the stack orchestrator (CloudFormati
 ------------------------------------------------------------
 Graphical Representation
 -------------------------
-![enter image description here](https://s3-us-west-2.amazonaws.com/altaas/hsproject/CI-CD-Design.png)
+![enter image description here](https://s3-us-west-2.amazonaws.com/altaas/hsproject/CI-CD-Design_segmented.png)
 
 
 Post-Mortem
