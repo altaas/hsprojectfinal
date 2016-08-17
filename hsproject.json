@@ -1,97 +1,97 @@
-{  
+{
    "AWSTemplateFormatVersion":"2010-09-09",
    "Description":"HSProject Template : This template will create a CI/CD pipeline including a Jenkins Build Server and an ElasticBeanstalk Environment",
-   "Mappings":{  
-      "AWSInstanceType2Arch":{  
-         "t1.micro":{  
+   "Mappings":{
+      "AWSInstanceType2Arch":{
+         "t1.micro":{
             "Arch":"PV64"
          },
-         "t2.micro":{  
+         "t2.micro":{
             "Arch":"HVM64"
          },
-         "t2.small":{  
+         "t2.small":{
             "Arch":"HVM64"
          },
-         "t2.medium":{  
+         "t2.medium":{
             "Arch":"HVM64"
          },
-         "m1.small":{  
+         "m1.small":{
             "Arch":"PV64"
          },
-         "m1.medium":{  
+         "m1.medium":{
             "Arch":"PV64"
          },
-         "m3.medium":{  
+         "m3.medium":{
             "Arch":"HVM64"
          },
-         "c1.medium":{  
+         "c1.medium":{
             "Arch":"PV64"
          }
       },
-      "AWSRegionArch2AMI":{  
-         "us-east-1":{  
+      "AWSRegionArch2AMI":{
+         "us-east-1":{
             "PV64":"ami-50842d38",
             "HVM64":"ami-08842d60",
             "HVMG2":"ami-3a329952"
          },
-         "us-west-2":{  
+         "us-west-2":{
             "PV64":"ami-af86c69f",
             "HVM64":"ami-8786c6b7",
             "HVMG2":"ami-47296a77"
          },
-         "us-west-1":{  
+         "us-west-1":{
             "PV64":"ami-c7a8a182",
             "HVM64":"ami-cfa8a18a",
             "HVMG2":"ami-331b1376"
          },
-         "eu-west-1":{  
+         "eu-west-1":{
             "PV64":"ami-aa8f28dd",
             "HVM64":"ami-748e2903",
             "HVMG2":"ami-00913777"
          },
-         "ap-southeast-1":{  
+         "ap-southeast-1":{
             "PV64":"ami-20e1c572",
             "HVM64":"ami-d6e1c584",
             "HVMG2":"ami-fabe9aa8"
          },
-         "ap-northeast-1":{  
+         "ap-northeast-1":{
             "PV64":"ami-21072820",
             "HVM64":"ami-35072834",
             "HVMG2":"ami-5dd1ff5c"
          },
-         "ap-southeast-2":{  
+         "ap-southeast-2":{
             "PV64":"ami-8b4724b1",
             "HVM64":"ami-fd4724c7",
             "HVMG2":"ami-e98ae9d3"
          },
-         "sa-east-1":{  
+         "sa-east-1":{
             "PV64":"ami-9d6cc680",
             "HVM64":"ami-956cc688",
             "HVMG2":"NOT_SUPPORTED"
          },
-         "cn-north-1":{  
+         "cn-north-1":{
             "PV64":"ami-a857c591",
             "HVM64":"ami-ac57c595",
             "HVMG2":"NOT_SUPPORTED"
          },
-         "eu-central-1":{  
+         "eu-central-1":{
             "PV64":"ami-a03503bd",
             "HVM64":"ami-b43503a9",
             "HVMG2":"ami-b03503ad"
          }
       }
    },
-   "Parameters":{  
-      "KeyName":{  
+   "Parameters":{
+      "KeyName":{
          "Description":"Name of an existing EC2 KeyPair to enable SSH access to the AWS Elastic Beanstalk instance",
          "Type":"AWS::EC2::KeyPair::KeyName",
          "ConstraintDescription":"must be the name of an existing EC2 KeyPair."
       },
-      "InstanceType":{  
+      "InstanceType":{
          "Description":"Jenkins Server instance type",
          "Type":"String",
          "Default":"t2.micro",
-         "AllowedValues":[  
+         "AllowedValues":[
             "t1.micro",
             "t2.micro",
             "t2.small",
@@ -103,25 +103,25 @@
          ],
          "ConstraintDescription":"Must be a valid EC2 instance type"
       },
-      "MyOAuthToken":{  
+      "MyOAuthToken":{
          "Description":"GitHub OAuthToken that will be used for CodePipeline Setup",
          "Type":"String",
          "ConstraintDescription":"You must use the token that was provided by the admin"
       }
    },
-   "Resources":{  
-      "JenkinsSecurityGroup":{  
+   "Resources":{
+      "JenkinsSecurityGroup":{
          "Type":"AWS::EC2::SecurityGroup",
-         "Properties":{  
+         "Properties":{
             "GroupDescription":"Allow traffic from port 8080 (Jenkins) and 22",
-            "SecurityGroupIngress":[  
-               {  
+            "SecurityGroupIngress":[
+               {
                   "IpProtocol":"tcp",
                   "FromPort":"22",
                   "ToPort":"22",
                   "CidrIp":"0.0.0.0/0"
                },
-               {  
+               {
                   "IpProtocol":"tcp",
                   "FromPort":"8080",
                   "ToPort":"8080",
@@ -129,37 +129,37 @@
                }
             ]
          },
-         "Metadata":{  
-            "AWS::CloudFormation::Designer":{  
+         "Metadata":{
+            "AWS::CloudFormation::Designer":{
                "id":"29efca67-2089-44e1-8af7-a5342640f54f"
             }
          }
       },
-      "JenkinsServer":{  
+      "JenkinsServer":{
          "Type":"AWS::EC2::Instance",
-         "Properties":{  
-            "Tags":[  
-               {  
+         "Properties":{
+            "Tags":[
+               {
                   "Key":"Name",
                   "Value":"Jenkins Server"
                }
             ],
-            "IamInstanceProfile":{  
+            "IamInstanceProfile":{
                "Ref":"JenkinsInstanceProfile"
             },
-            "KeyName":{  
+            "KeyName":{
                "Ref":"KeyName"
             },
-            "ImageId":{  
-               "Fn::FindInMap":[  
+            "ImageId":{
+               "Fn::FindInMap":[
                   "AWSRegionArch2AMI",
-                  {  
+                  {
                      "Ref":"AWS::Region"
                   },
-                  {  
-                     "Fn::FindInMap":[  
+                  {
+                     "Fn::FindInMap":[
                         "AWSInstanceType2Arch",
-                        {  
+                        {
                            "Ref":"InstanceType"
                         },
                         "Arch"
@@ -167,45 +167,52 @@
                   }
                ]
             },
-            "InstanceType":{  
+            "InstanceType":{
                "Ref":"InstanceType"
             },
-            "SecurityGroupIds":[  
-               {  
+            "SecurityGroupIds":[
+               {
                   "Ref":"JenkinsSecurityGroup"
                }
             ],
-            "UserData":{  
-               "Fn::Base64":{  
-                  "Fn::Join":[  
+            "UserData":{
+               "Fn::Base64":{
+                  "Fn::Join":[
                      "",
-                     [  
+                     [
                         "#!/bin/bash -x\n",
                         "yum update -y aws-cfn-bootstrap\n",
                         "## Setting the right Repo for Jenkins setup\n",
                         "wget -O /etc/yum.repos.d/jenkins.repo http://pkg.jenkins-ci.org/redhat/jenkins.repo\n",
                         "rpm --import http://pkg.jenkins-ci.org/redhat/jenkins-ci.org.key\n",
+                        "#Install my packages for my tests",
+                        "\n",
+                        "gem install serverspec",
+                        "\n",
+                        "gem install rake",
+                        "\n",
                         "# Install the files and packages from the metadata\n",
                         "/opt/aws/bin/cfn-init -v ",
                         "         --stack ",
-                        {  
+                        {
                            "Ref":"AWS::StackName"
                         },
                         "   --resource JenkinsServer ",
+                        "   --configsets InstallAndTest ",
                         "   --region ",
-                        {  
+                        {
                            "Ref":"AWS::Region"
                         },
                         "\n",
                         "# Signal the status from cfn-init\n",
                         "/opt/aws/bin/cfn-signal -e $? ",
                         "         --stack ",
-                        {  
+                        {
                            "Ref":"AWS::StackName"
                         },
                         "         --resource JenkinsServer ",
                         "         --region ",
-                        {  
+                        {
                            "Ref":"AWS::Region"
                         },
                         "\n"
@@ -214,36 +221,56 @@
                }
             }
          },
-         "CreationPolicy":{  
-            "ResourceSignal":{  
+         "CreationPolicy":{
+            "ResourceSignal":{
                "Count":"1"
             }
          },
-         "Metadata":{  
-            "AWS::CloudFormation::Designer":{  
+         "Metadata":{
+            "AWS::CloudFormation::Designer":{
                "id":"9bf2ab7c-bb79-4f67-811e-7d0356afb862"
             },
             "Comment1":"Configure the bootstrap helpers to update Jenkins configuration file",
             "Comment2":"Copy configuration for appropriate region",
-            "AWS::CloudFormation::Init":{  
-               "config":{  
-                  "packages":{  
-                     "yum":{  
-                        "jenkins":[]
+            "AWS::CloudFormation::Init":{
+               "configSets":{
+                  "InstallAndTest":[
+                     "Install",
+                     "RunTests"
+                  ]
+               },
+               "Install":{
+                  "packages":{
+                     "yum":{
+                        "jenkins":[
+
+                        ],
+                        "rubygem20-rake":[
+
+                        ],
+                        "awslogs":[
+
+                        ]
                      }
                   },
-                  "sources":{  
+                  "sources":{
                      "/var/lib/":"https://s3-us-west-2.amazonaws.com/altaas/hsproject/jenkins_config/jenkins.tar.gz",
-                     "~/":"https://s3-us-west-2.amazonaws.com/altaas/hsproject/jenkins_test.tar.gz"
+                     "/home/ec2-user/":"https://s3-us-west-2.amazonaws.com/altaas/hsproject/jenkins_config/jenkins_test.zip"
                   },
-                  "files":{  
-                     "/var/lib/jenkins/jobs/hsproject/config.xml":{  
-                        "source":{  
-                           "Fn::Join":[  
+                  "files":{
+                     "/tmp/cwlogs/cfn-logs.conf":{
+                        "content":"#Beginning of the config file",
+                        "mode":"000644",
+                        "owner":"root",
+                        "group":"root"
+                     },
+                     "/var/lib/jenkins/jobs/hsproject/config.xml":{
+                        "source":{
+                           "Fn::Join":[
                               "",
-                              [  
+                              [
                                  "https://s3-us-west-2.amazonaws.com/altaas/hsproject/jenkins_config/",
-                                 {  
+                                 {
                                     "Ref":"AWS::Region"
                                  },
                                  "-config.xml"
@@ -255,76 +282,89 @@
                         "group":"root"
                      }
                   },
-                  "services":{  
-                     "sysvinit":{  
-                        "jenkins":{  
+                  "services":{
+                     "sysvinit":{
+                        "jenkins":{
                            "enabled":"true",
                            "ensureRunning":"true",
-                           "files":[  
+                           "files":[
                               "/var/lib/jenkins/jobs/hsproject/config.xml"
                            ]
+                        },
+                        "awslogs":{
+                           "enabled":"true",
+                           "ensureRunning":"true"
                         }
+                     }
+                  }
+               },
+               "RunTests":{
+                  "commands":{
+                     "test":{
+                        "command":"rake spec",
+                        "cwd":"/home/ec2-user/",
+                        "ignoreErrors":"true"
                      }
                   }
                }
             }
          }
       },
-      "JenkinsInstanceProfile":{  
+      "JenkinsInstanceProfile":{
          "Type":"AWS::IAM::InstanceProfile",
-         "Properties":{  
-            "Roles":[  
-               {  
+         "Properties":{
+            "Roles":[
+               {
                   "Ref":"JenkinsServerRole"
                }
             ]
          },
-         "Metadata":{  
-            "AWS::CloudFormation::Designer":{  
+         "Metadata":{
+            "AWS::CloudFormation::Designer":{
                "id":"c21d62da-6732-4f37-ab28-df95f7b23ce7"
             }
          },
-         "DependsOn":[  
+         "DependsOn":[
             "JenkinsServerRole"
          ]
       },
-      "JenkinsServerRole":{  
+      "JenkinsServerRole":{
          "Type":"AWS::IAM::Role",
-         "Properties":{  
-            "AssumeRolePolicyDocument":{  
+         "Properties":{
+            "AssumeRolePolicyDocument":{
                "Version":"2012-10-17",
-               "Statement":[  
-                  {  
+               "Statement":[
+                  {
                      "Action":"sts:AssumeRole",
                      "Effect":"Allow",
-                     "Principal":{  
+                     "Principal":{
                         "Service":"ec2.amazonaws.com"
                      }
                   }
                ]
             },
-            "ManagedPolicyArns":[  
+            "ManagedPolicyArns":[
                "arn:aws:iam::aws:policy/AWSCodePipelineCustomActionAccess"
             ],
             "Path":"/"
          },
-         "Metadata":{  
-            "AWS::CloudFormation::Designer":{  
+         "Metadata":{
+            "AWS::CloudFormation::Designer":{
                "id":"69c0f6f9-cb6a-4f96-a6db-a21dc4f39e14"
             }
          }
       },
-      "WebServerRole":{  
+      "WebServerRole":{
          "Type":"AWS::IAM::Role",
-         "Properties":{  
-            "AssumeRolePolicyDocument":{  
-               "Statement":[  
-                  {  
+         "Properties":{
+            "AssumeRolePolicyDocument":{
+               "Statement":[
+                  {
                      "Effect":"Allow",
-                     "Principal":{  
+                     "Principal":{
                         "Service":"ec2.amazonaws.com"
                      },
-                     "Action":[  
+                     "Action":[
                         "sts:AssumeRole"
                      ]
                   }
@@ -332,156 +372,166 @@
             },
             "Path":"/"
          },
-         "Metadata":{  
-            "AWS::CloudFormation::Designer":{  
+         "Metadata":{
+            "AWS::CloudFormation::Designer":{
                "id":"319828fe-aac3-4b5c-9d26-5d807795cb76"
             }
          }
       },
-      "WebServerRolePolicy":{  
+      "WebServerRolePolicy":{
          "Type":"AWS::IAM::Policy",
-         "Properties":{  
+         "Properties":{
             "PolicyName":"WebServerRole",
-            "PolicyDocument":{  
-               "Statement":[  
-                  {  
+            "PolicyDocument":{
+               "Statement":[
+                  {
                      "Effect":"Allow",
                      "NotAction":"iam:*",
                      "Resource":"*"
                   }
                ]
             },
-            "Roles":[  
-               {  
+            "Roles":[
+               {
                   "Ref":"WebServerRole"
                }
             ]
          },
-         "Metadata":{  
-            "AWS::CloudFormation::Designer":{  
+         "Metadata":{
+            "AWS::CloudFormation::Designer":{
                "id":"0362591a-ad8d-49c1-af93-ed2b164ddde5"
             }
          }
       },
-      "WebServerInstanceProfile":{  
+      "WebServerInstanceProfile":{
          "Type":"AWS::IAM::InstanceProfile",
-         "Properties":{  
+         "Properties":{
             "Path":"/",
-            "Roles":[  
-               {  
+            "Roles":[
+               {
                   "Ref":"WebServerRole"
                }
             ]
          },
-         "Metadata":{  
-            "AWS::CloudFormation::Designer":{  
+         "Metadata":{
+            "AWS::CloudFormation::Designer":{
                "id":"4c9b41aa-4b89-46bd-ac00-4515f19ee3a1"
             }
          }
       },
-      "HSApplication":{  
+      "HSApplication":{
          "Type":"AWS::ElasticBeanstalk::Application",
-         "Properties":{  
+         "Properties":{
             "Description":"AWS Elastic Beanstalk Sample Node.js Application"
          },
-         "Metadata":{  
-            "AWS::CloudFormation::Designer":{  
+         "Metadata":{
+            "AWS::CloudFormation::Designer":{
                "id":"b7c62bbb-c2a6-4411-96ac-358024093adc"
             }
          }
       },
-      "HSApplicationVersion":{  
+      "HSApplicationVersion":{
          "Type":"AWS::ElasticBeanstalk::ApplicationVersion",
-         "Properties":{  
+         "Properties":{
             "Description":"Version 1.0",
-            "ApplicationName":{  
+            "ApplicationName":{
                "Ref":"HSApplication"
             },
-            "SourceBundle": {
-              "S3Bucket": "altaas",
-              "S3Key": "hsproject/nodeApp.zip"
-        }
+            "SourceBundle":{
+               "S3Bucket":{
+                  "Fn::Join":[
+                     "-",
+                     [
+                        {
+                           "Ref":"AWS::Region"
+                        },
+                        "nodeapp"
+                     ]
+                  ]
+               },
+               "S3Key":"hsproject/nodeApp.zip"
+            }
          },
-         "Metadata":{  
-            "AWS::CloudFormation::Designer":{  
+         "Metadata":{
+            "AWS::CloudFormation::Designer":{
                "id":"0745d619-3c92-433f-b8e2-e1770f5febd0"
             }
          }
       },
-      "HSConfigurationTemplate":{  
+      "HSConfigurationTemplate":{
          "Type":"AWS::ElasticBeanstalk::ConfigurationTemplate",
-         "Properties":{  
-            "ApplicationName":{  
+         "Properties":{
+            "ApplicationName":{
                "Ref":"HSApplication"
             },
             "Description":"SSH access to Node.JS Application",
             "SolutionStackName":"64bit Amazon Linux 2016.03 v2.1.3 running Node.js",
-            "OptionSettings":[  
-               {  
+            "OptionSettings":[
+               {
                   "Namespace":"aws:autoscaling:launchconfiguration",
                   "OptionName":"EC2KeyName",
-                  "Value":{  
+                  "Value":{
                      "Ref":"KeyName"
                   }
                },
-               {  
+               {
                   "OptionName":"NodeCommand",
                   "Namespace":"aws:elasticbeanstalk:container:nodejs",
                   "Value":"npm start"
                },
-               {  
+               {
                   "Namespace":"aws:autoscaling:launchconfiguration",
                   "OptionName":"IamInstanceProfile",
-                  "Value":{  
+                  "Value":{
                      "Ref":"WebServerInstanceProfile"
                   }
                },
-               {  
+               {
                   "Namespace":"aws:autoscaling:asg",
                   "OptionName":"MaxSize",
                   "Value":"2"
                },
-               {  
+               {
                   "Namespace":"aws:autoscaling:asg",
                   "OptionName":"MinSize",
                   "Value":"2"
                }
             ]
          },
-         "Metadata":{  
-            "AWS::CloudFormation::Designer":{  
+         "Metadata":{
+            "AWS::CloudFormation::Designer":{
                "id":"c9b0e79f-be0e-4147-8816-fe68b8040623"
             }
          }
       },
-      "HSEnvironment":{  
+      "HSEnvironment":{
          "Type":"AWS::ElasticBeanstalk::Environment",
-         "Properties":{  
+         "Properties":{
             "Description":"AWS Elastic Beanstalk Environment running Sample Node.js Application",
-            "ApplicationName":{  
+            "ApplicationName":{
                "Ref":"HSApplication"
             },
-            "TemplateName":{  
+            "TemplateName":{
                "Ref":"HSConfigurationTemplate"
             },
-            "VersionLabel":{  
+            "VersionLabel":{
                "Ref":"HSApplicationVersion"
             }
          },
-         "Metadata":{  
-            "AWS::CloudFormation::Designer":{  
+         "Metadata":{
+            "AWS::CloudFormation::Designer":{
                "id":"540cd7c7-32a4-4089-9c40-c280aa68bb61"
             }
          }
       },
-      "MyJenkinsAction":{  
+      "MyJenkinsAction":{
          "Type":"AWS::CodePipeline::CustomActionType",
-         "Properties":{  
+         "Properties":{
             "Category":"Build",
             "Provider":"Custom",
             "Version":"1",
-            "ConfigurationProperties":[  
-               {  
+            "ConfigurationProperties":[
+               {
                   "Description":"The name of the build project must be provided when this action is added to the pipeline.",
                   "Key":"true",
                   "Name":"ProjectName",
@@ -490,7 +540,7 @@
                   "Secret":"false",
                   "Type":"String"
                },
-               {  
+               {
                   "Description":"The URL of the Jenkins Server to link",
                   "Key":"true",
                   "Name":"JenkinsServerURL",
@@ -499,28 +549,28 @@
                   "Type":"String"
                }
             ],
-            "InputArtifactDetails":{  
+            "InputArtifactDetails":{
                "MaximumCount":"5",
                "MinimumCount":"1"
             },
-            "OutputArtifactDetails":{  
+            "OutputArtifactDetails":{
                "MaximumCount":"5",
                "MinimumCount":"0"
             },
-            "Settings":{  
-               "EntityUrlTemplate":{  
-                  "Fn::Join":[  
+            "Settings":{
+               "EntityUrlTemplate":{
+                  "Fn::Join":[
                      "",
-                     [  
+                     [
                         "{Config:JenkinsServerURL}",
                         "job/{Config:ProjectName}"
                      ]
                   ]
                },
-               "ExecutionUrlTemplate":{  
-                  "Fn::Join":[  
+               "ExecutionUrlTemplate":{
+                  "Fn::Join":[
                      "",
-                     [  
+                     [
                         "{Config:JenkinsServerURL}",
                         "job/{Config:ProjectName}/{ExternalExecutionId}"
                      ]
@@ -528,47 +578,47 @@
                }
             }
          },
-         "Metadata":{  
-            "AWS::CloudFormation::Designer":{  
+         "Metadata":{
+            "AWS::CloudFormation::Designer":{
                "id":"98ef3d9f-4c5b-41c6-b9b5-da620f3260a0"
             }
          }
       },
-      "HSPipeline":{  
+      "HSPipeline":{
          "Type":"AWS::CodePipeline::Pipeline",
-         "Properties":{  
+         "Properties":{
             "RoleArn":"arn:aws:iam::245933761966:role/AWS-CodePipeline-Service",
-            "ArtifactStore":{  
+            "ArtifactStore":{
                "Type":"S3",
-               "Location":{  
+               "Location":{
                   "Ref":"PipelineArtifact"
                }
             },
-            "Stages":[  
-               {  
+            "Stages":[
+               {
                   "Name":"Source",
-                  "Actions":[  
-                     {  
-                        "InputArtifacts":[  
+                  "Actions":[
+                     {
+                        "InputArtifacts":[
 
                         ],
                         "Name":"Source",
-                        "ActionTypeId":{  
+                        "ActionTypeId":{
                            "Category":"Source",
                            "Owner":"ThirdParty",
                            "Version":"1",
                            "Provider":"GitHub"
                         },
-                        "OutputArtifacts":[  
-                           {  
+                        "OutputArtifacts":[
+                           {
                               "Name":"MyApp"
                            }
                         ],
-                        "Configuration":{  
+                        "Configuration":{
                            "Owner":"altaas",
                            "Repo":"hsproject",
                            "Branch":"master",
-                           "OAuthToken":{  
+                           "OAuthToken":{
                               "Ref":"MyOAuthToken"
                            }
                         },
@@ -576,36 +626,36 @@
                      }
                   ]
                },
-               {  
+               {
                   "Name":"Build",
-                  "Actions":[  
-                     {  
-                        "InputArtifacts":[  
-                           {  
+                  "Actions":[
+                     {
+                        "InputArtifacts":[
+                           {
                               "Name":"MyApp"
                            }
                         ],
                         "Name":"MyJenkinsAction",
-                        "ActionTypeId":{  
+                        "ActionTypeId":{
                            "Category":"Build",
                            "Owner":"Custom",
                            "Version":"1",
                            "Provider":"Custom"
                         },
-                        "OutputArtifacts":[  
-                           {  
+                        "OutputArtifacts":[
+                           {
                               "Name":"MyAppBuild"
                            }
                         ],
-                        "Configuration":{  
+                        "Configuration":{
                            "ProjectName":"hsproject",
-                           "JenkinsServerURL":{  
-                              "Fn::Join":[  
+                           "JenkinsServerURL":{
+                              "Fn::Join":[
                                  "",
-                                 [  
+                                 [
                                     "http://",
-                                    {  
-                                       "Fn::GetAtt":[  
+                                    {
+                                       "Fn::GetAtt":[
                                           "JenkinsServer",
                                           "PublicDnsName"
                                        ]
@@ -620,30 +670,30 @@
                      }
                   ]
                },
-               {  
+               {
                   "Name":"Beta",
-                  "Actions":[  
-                     {  
-                        "InputArtifacts":[  
-                           {  
+                  "Actions":[
+                     {
+                        "InputArtifacts":[
+                           {
                               "Name":"MyAppBuild"
                            }
                         ],
                         "Name":"hsproject-env",
-                        "ActionTypeId":{  
+                        "ActionTypeId":{
                            "Category":"Deploy",
                            "Owner":"AWS",
                            "Version":"1",
                            "Provider":"ElasticBeanstalk"
                         },
-                        "OutputArtifacts":[  
+                        "OutputArtifacts":[
 
                         ],
-                        "Configuration":{  
-                           "ApplicationName":{  
+                        "Configuration":{
+                           "ApplicationName":{
                               "Ref":"HSApplication"
                            },
-                           "EnvironmentName":{  
+                           "EnvironmentName":{
                               "Ref":"HSEnvironment"
                            }
                         },
@@ -653,34 +703,34 @@
                }
             ]
          },
-         "Metadata":{  
-            "AWS::CloudFormation::Designer":{  
+         "Metadata":{
+            "AWS::CloudFormation::Designer":{
                "id":"27e6df41-cbdc-4aae-8577-1e3b8dff9efb"
             }
          }
       },
-      "PipelineArtifact":{  
+      "PipelineArtifact":{
          "Type":"AWS::S3::Bucket",
-         "Properties":{  
+         "Properties":{
 
          },
-         "Metadata":{  
-            "AWS::CloudFormation::Designer":{  
+         "Metadata":{
+            "AWS::CloudFormation::Designer":{
                "id":"8fe6fb89-c135-41c7-a768-99a6453c1107"
             }
          }
       }
    },
-   "Outputs":{  
-      "URL":{  
+   "Outputs":{
+      "URL":{
          "Description":"URL of the AWS Elastic Beanstalk Environment",
-         "Value":{  
-            "Fn::Join":[  
+         "Value":{
+            "Fn::Join":[
                "",
-               [  
+               [
                   "http://",
-                  {  
-                     "Fn::GetAtt":[  
+                  {
+                     "Fn::GetAtt":[
                         "HSEnvironment",
                         "EndpointURL"
                      ]
@@ -689,14 +739,14 @@
             ]
          }
       },
-      "JenkinsURL":{  
-         "Value":{  
-            "Fn::Join":[  
+      "JenkinsURL":{
+         "Value":{
+            "Fn::Join":[
                "",
-               [  
+               [
                   "http://",
-                  {  
-                     "Fn::GetAtt":[  
+                  {
+                     "Fn::GetAtt":[
                         "JenkinsServer",
                         "PublicDnsName"
                      ]
