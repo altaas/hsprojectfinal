@@ -17,8 +17,6 @@ Pre-Requisites
 
 - The user must have Full access + IAM creation permission since we will create multiple resources in the account
 
-- To run the tests, you need to have ruby installed. Following gems must be installed : serverspec
-
 
 Instructions
 -----------------------
